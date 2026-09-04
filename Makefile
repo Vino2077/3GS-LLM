@@ -13,6 +13,7 @@ ThreeGSLLM_FILES := \
 	Sources/GSLChatViewController.m \
 	Sources/GSLBenchmarkViewController.m \
 	Sources/GSLTokenizerBridge.m \
+	Runtime/compat_memory.c \
 	Runtime/int8_gemv.c \
 	Runtime/model_format.c \
 	Runtime/tokenizer.c \
@@ -20,7 +21,7 @@ ThreeGSLLM_FILES := \
 	Runtime/sampler.c \
 	Runtime/benchmark.c
 ThreeGSLLM_FRAMEWORKS := UIKit CoreGraphics Foundation
-ThreeGSLLM_CFLAGS := -std=gnu11 -O3 -fno-objc-arc -fblocks -marm -mfpu=neon -Wall -Wextra
+ThreeGSLLM_CFLAGS := -std=gnu11 -O3 -fno-objc-arc -fblocks -fno-builtin -marm -mfpu=neon -Wall -Wextra
 ThreeGSLLM_LDFLAGS := -Wl,-dead_strip
 
 include $(THEOS_MAKE_PATH)/application.mk
