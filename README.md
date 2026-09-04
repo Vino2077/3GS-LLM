@@ -8,18 +8,23 @@ architecture is frozen, the real phone must tell us how quickly its 600 MHz
 Cortex-A8 can execute the three INT8 matrix-vector shapes that will dominate
 token generation.
 
-## Current milestone: ARMv7/NEON benchmark
+## Current milestone: 17M-parameter candidate benchmark
 
-The first IPA contains a small UIKit application that measures:
+The first hardware run measured 269--416 MMAC/s on a real iPhone 3GS. That is
+fast enough to test a substantially more useful model than the original
+2M-parameter concept. The current IPA measures the exact dense projections for
+the proposed `3GS-LM-17M` shape:
 
-- `192 x 192` -- attention projection;
-- `512 x 192` -- feed-forward projection;
-- `4096 x 192` -- vocabulary projection.
+- model width 384, 8 transformer layers, 6 attention heads;
+- SwiGLU feed-forward width 1024;
+- 8192-token tied vocabulary;
+- 256-token context;
+- approximately 17.3M parameters and 17.5 MB of quantized weights.
 
-The app verifies the optimized dot product against a scalar implementation
-before reporting milliseconds per matrix-vector multiply and MMAC/s. The
-benchmark runs entirely on the CPU; no network connection or model file is
-required.
+The app verifies the optimized dot product against a scalar implementation,
+reports every candidate matrix shape, and estimates the dense kernel time per
+generated token. Attention, normalization, tokenizer and sampling overhead are
+intentionally not included yet.
 
 ## Build target
 
