@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "int8_gemv.h"
+
 typedef struct {
     size_t rows;
     size_t cols;
