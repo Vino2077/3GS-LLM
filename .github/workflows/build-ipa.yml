@@ -1,0 +1,74 @@
+name: Build iOS 6 IPA
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  THEOS: /home/runner/theos
+  THEOS_COMMIT: 5280bd038207e14f8bd76f5417aa2fe641c03228
+  TOOLCHAIN_TAG: test-210562a
+  SDK_TAG: master-146e41f
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Test portable INT8 kernel
+        run: |
+          cc -std=c99 -O3 -Wall -Wextra -Werror \
+            Tests/test_int8_gemv.c Runtime/int8_gemv.c \
+            -o /tmp/test-int8-gemv
+          /tmp/test-int8-gemv
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential fakeroot git libtinfo6 libxml2 perl rsync xz-utils zip
+
+      - name: Cache Theos toolchain
+        id: cache-theos
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/theos
+          key: theos-${{ runner.os }}-${{ runner.arch }}-${{ env.THEOS_COMMIT }}-${{ env.TOOLCHAIN_TAG }}-${{ env.SDK_TAG }}
+
+      - name: Install pinned Theos toolchain
+        if: steps.cache-theos.outputs.cache-hit != 'true'
+        run: |
+          git clone --recursive https://github.com/theos/theos.git "$THEOS"
+          git -C "$THEOS" checkout "$THEOS_COMMIT"
+          git -C "$THEOS" submodule update --init --recursive
+
+          mkdir -p "$THEOS/toolchain" "$THEOS/sdks"
+          curl --fail --location --retry 3 \
+            "https://github.com/L1ghtmann/llvm-project/releases/download/${TOOLCHAIN_TAG}/iOSToolchain-x86_64.tar.xz" \
+            | tar -xJ -C "$THEOS/toolchain"
+          curl --fail --location --retry 3 \
+            "https://github.com/theos/sdks/releases/download/${SDK_TAG}/iPhoneOS9.3.sdk.tar.xz" \
+            | tar -xJ -C "$THEOS/sdks"
+
+      - name: Build ad-hoc IPA
+        run: make clean package FINALPACKAGE=1
+
+      - name: Inspect package
+        run: |
+          test -n "$(find packages -maxdepth 1 -name '*.ipa' -print -quit)"
+          find packages -maxdepth 1 -name '*.ipa' -print
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: 3GS-LLM-IPA
+          path: packages/*.ipa
+          if-no-files-found: error

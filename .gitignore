@@ -1,0 +1,7 @@
+.theos/
+packages/
+*.dSYM/
+*.ipa
+*.deb
+DerivedData/
+.DS_Store
