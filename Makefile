@@ -1,5 +1,5 @@
 ARCHS := armv7
-TARGET := iphone:clang:9.3:6.0
+TARGET := iphone:clang:10.3:6.0
 PACKAGE_FORMAT := ipa
 INSTALL_TARGET_PROCESSES := ThreeGSLLM
 

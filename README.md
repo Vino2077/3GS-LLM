@@ -37,7 +37,7 @@ Open the workflow run, download the `3GS-LLM-IPA` artifact, and extract the IPA.
 
 ## Local build
 
-With Theos and the iPhoneOS 9.3 SDK installed:
+With Theos and the iPhoneOS 10.3 SDK installed:
 
 ```sh
 export THEOS="$HOME/theos"
