@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Test portable INT8 kernel
         run: |
@@ -39,7 +39,7 @@ jobs:
 
       - name: Cache Theos toolchain
         id: cache-theos
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /home/runner/theos
           key: theos-${{ runner.os }}-${{ runner.arch }}-${{ env.THEOS_COMMIT }}-${{ env.TOOLCHAIN_TAG }}-${{ env.SDK_TAG }}-${{ env.SDK_VERSION }}
@@ -64,11 +64,12 @@ jobs:
 
       - name: Inspect package
         run: |
-          test -n "$(find packages -maxdepth 1 -name '*.ipa' -print -quit)"
-          find packages -maxdepth 1 -name '*.ipa' -print
+          IPA_PATH="$(find packages -maxdepth 1 -name '*.ipa' -print -quit)"
+          test -n "$IPA_PATH"
+          python3 Scripts/verify_ipa.py "$IPA_PATH"
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: 3GS-LLM-IPA
           path: packages/*.ipa
