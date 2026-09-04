@@ -7,7 +7,7 @@ The architecture was selected from measurements on the real phone. The app is
 now a local chat UI backed by a C99 transformer decoder; the hardware benchmark
 remains available from the navigation bar.
 
-## Current milestone: first trained offline build
+## Current milestone: alignment pipeline and sampler evaluation
 
 The first hardware run measured 269--416 MMAC/s on a real iPhone 3GS. That is
 fast enough to test a substantially more useful model than the original
@@ -30,6 +30,13 @@ The first model was trained for 6,000 all-token steps followed by 600
 response-only steps. On a fixed validation sample, the selected checkpoint has
 a response loss of 3.91833. Simulating the exported row-wise weight and dynamic
 activation INT8 path changes that loss by only +0.00175.
+
+The next training pipeline fixes a flaw in that response-only stage: it now
+samples complete role-aligned pairs instead of random windows. It also includes
+a 41-prompt reproducible quality suite, runtime-logit parity tracing, switchable
+sampling presets, likes-controlled subsets, and a separate quality-SFT and
+teacher-distillation path. Model dimensions and the iPhone runtime workload are
+unchanged.
 
 The dataset card does not declare a license. Source rows and trained weights are
 therefore kept out of this public repository. A CI build is an asset-free app
@@ -78,4 +85,6 @@ The package is written to `packages/`.
 3. Train the 17.3M-parameter model on the DTF reply corpus. Done.
 4. Quantize weights to INT8 and validate output against the reference runtime. Done.
 5. Inject the assets into the iOS 6 chat shell. Done.
-6. Test generation speed, stability, and replies on the real device.
+6. Add aligned SFT, distillation, fixed-prompt evaluation, and sampler presets. Done.
+7. Train and select the next aligned/distilled checkpoint.
+8. Test generation speed, stability, and replies on the real device.

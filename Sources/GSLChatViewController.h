@@ -2,6 +2,7 @@
 
 #import "GSLTokenizerBridge.h"
 #import "../Runtime/decoder.h"
+#import "../Runtime/sampler.h"
 
 @interface GSLChatViewController : UIViewController <UITextFieldDelegate> {
     UITextView *_conversationView;
@@ -15,6 +16,7 @@
     BOOL _generating;
     NSString *_activePrompt;
     CGFloat _keyboardHeight;
+    GSLSamplerPreset _samplerPreset;
 }
 
 @property(nonatomic, retain) UITextView *conversationView;

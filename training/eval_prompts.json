@@ -1,0 +1,50 @@
+[
+  {"id":"simple-01","category":"simple_questions","prompt":"Как тебя зовут?","expected_topic":["зовут","нейрон","модель","3gs"]},
+  {"id":"simple-02","category":"simple_questions","prompt":"Ты умеешь говорить по-русски?","expected_topic":["русск","умею","да"]},
+  {"id":"simple-03","category":"simple_questions","prompt":"Зачем люди читают комментарии?","expected_topic":["комментар","люд","мнени","спор"]},
+  {"id":"simple-04","category":"simple_questions","prompt":"Что лучше: чай или кофе?","expected_topic":["чай","кофе"]},
+  {"id":"simple-05","category":"simple_questions","prompt":"Почему старые телефоны всё ещё работают?","expected_topic":["телефон","стар","работ","желез"]},
+
+  {"id":"reaction-01","category":"reactions","prompt":"Киберпанк 2077 великая игра","expected_topic":["киберпан","патч","релиз","игр"]},
+  {"id":"reaction-02","category":"reactions","prompt":"Новый айфон слишком дорогой","expected_topic":["айфон","цен","дорог"]},
+  {"id":"reaction-03","category":"reactions","prompt":"Я снова купил игру и ни разу её не запустил","expected_topic":["игр","куп","запуст","бэклог"]},
+  {"id":"reaction-04","category":"reactions","prompt":"Ремейков стало слишком много","expected_topic":["ремейк","нов","игр"]},
+  {"id":"reaction-05","category":"reactions","prompt":"Сегодня наконец-то выспался","expected_topic":["сон","высп","поздрав"]},
+
+  {"id":"games-01","category":"games","prompt":"Скайрим играл?","expected_topic":["скайрим","тамриэл","дракон","bethesda","играл"]},
+  {"id":"games-02","category":"games","prompt":"Стоит начинать Ведьмака 3?","expected_topic":["ведьмак","геральт","игр","начин"]},
+  {"id":"games-03","category":"games","prompt":"Почему все любят Dark Souls?","expected_topic":["souls","соулс","слож","босс"]},
+  {"id":"games-04","category":"games","prompt":"Какая часть Fallout лучшая?","expected_topic":["fallout","фоллаут","част"]},
+  {"id":"games-05","category":"games","prompt":"На чём лучше играть: ПК или консоль?","expected_topic":["пк","консол","игр"]},
+  {"id":"games-06","category":"games","prompt":"GTA 6 когда-нибудь выйдет?","expected_topic":["gta","выйд","rockstar"]},
+  {"id":"games-07","category":"games","prompt":"Любишь пошаговые стратегии?","expected_topic":["стратег","пошаг","люб"]},
+  {"id":"games-08","category":"games","prompt":"Что думаешь про инди-игры?","expected_topic":["инди","игр","разработ"]},
+
+  {"id":"daily-01","category":"daily","prompt":"Что сегодня поесть?","expected_topic":["есть","поесть","еда","приготов"]},
+  {"id":"daily-02","category":"daily","prompt":"На улице дождь, брать зонт?","expected_topic":["дожд","зонт","брать"]},
+  {"id":"daily-03","category":"daily","prompt":"Как не проспать утром?","expected_topic":["будиль","спать","утр"]},
+  {"id":"daily-04","category":"daily","prompt":"Пойти сегодня гулять или остаться дома?","expected_topic":["гуля","дом","погод"]},
+  {"id":"daily-05","category":"daily","prompt":"Что делать, если закончился интернет?","expected_topic":["интернет","провайдер","роутер","офлайн"]},
+
+  {"id":"dtf-01","category":"dtf_style","prompt":"Автор, ты это серьёзно сейчас?","expected_topic":["автор","серьз","да","нет"]},
+  {"id":"dtf-02","category":"dtf_style","prompt":"Опять прогрев гоев в комментариях","expected_topic":["прогрев","комментар","гоев"]},
+  {"id":"dtf-03","category":"dtf_style","prompt":"Классика: сначала предзаказал, потом жалуется","expected_topic":["предзаказ","жалует","классик"]},
+  {"id":"dtf-04","category":"dtf_style","prompt":"Минусы будут или только восторги?","expected_topic":["минус","восторг","будут"]},
+  {"id":"dtf-05","category":"dtf_style","prompt":"Вот ради таких комментариев я сюда и захожу","expected_topic":["комментар","захож","спасибо"]},
+
+  {"id":"identity-01","category":"identity","prompt":"Ты кто?","expected_topic":["нейрон","модель","айфон","3gs","локаль"]},
+  {"id":"identity-02","category":"identity","prompt":"Где ты работаешь?","expected_topic":["айфон","телефон","локаль","устройств"]},
+  {"id":"identity-03","category":"identity","prompt":"Тебе нужен интернет?","expected_topic":["интернет","офлайн","не нужен","нет"]},
+  {"id":"identity-04","category":"identity","prompt":"Ты настоящий человек?","expected_topic":["человек","модель","нейрон","нет"]},
+  {"id":"identity-05","category":"identity","prompt":"Что ты умеешь?","expected_topic":["ответ","писать","разговар","текст"]},
+
+  {"id":"direct-01","category":"direct_answers","prompt":"Сколько будет два плюс два?","expected_topic":["четыр","4"]},
+  {"id":"direct-02","category":"direct_answers","prompt":"Ответь одним словом: снег белый?","expected_topic":["да"]},
+  {"id":"direct-03","category":"direct_answers","prompt":"Можно ли запустить тебя без сети?","expected_topic":["да","офлайн","без сет"]},
+  {"id":"direct-04","category":"direct_answers","prompt":"Какой сейчас год?","expected_topic":["2026","год","не знаю"]},
+  {"id":"direct-05","category":"direct_answers","prompt":"Назови одну игру про драконов","expected_topic":["скайрим","dragon","дракон"]},
+
+  {"id":"failure-01","category":"known_failures","prompt":"Скайрим играл?","expected_topic":["скайрим","тамриэл","дракон","bethesda","играл"]},
+  {"id":"failure-02","category":"known_failures","prompt":"Ты кто?","expected_topic":["нейрон","модель","айфон","3gs","локаль"]},
+  {"id":"failure-03","category":"known_failures","prompt":"Киберпанк 2077 великая игра","expected_topic":["киберпан","патч","релиз","игр"]}
+]

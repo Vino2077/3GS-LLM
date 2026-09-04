@@ -8,69 +8,11 @@ import math
 from pathlib import Path
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 
+from int8_reference import quantize_model
 from model import ModelConfig, ThreeGSModel
-from train import TokenStream
-
-
-def quantize_rows(weight: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-    scales = (weight.float().abs().amax(dim=1) / 127.0).clamp_min(
-        torch.finfo(torch.float32).tiny
-    )
-    values = torch.round(weight.float() / scales[:, None]).clamp(-127, 127)
-    return values.to(torch.int8), scales
-
-
-class QuantizedEmbedding(nn.Module):
-    def __init__(self, weight: torch.Tensor) -> None:
-        super().__init__()
-        values, scales = quantize_rows(weight)
-        self.register_buffer("values", values)
-        self.register_buffer("scales", scales)
-
-    def forward(self, tokens: torch.Tensor) -> torch.Tensor:
-        values = F.embedding(tokens, self.values).float()
-        scales = F.embedding(tokens, self.scales[:, None])
-        return values * scales
-
-
-class QuantizedLinear(nn.Module):
-    def __init__(self, weight: torch.Tensor) -> None:
-        super().__init__()
-        values, scales = quantize_rows(weight)
-        self.register_buffer("values", values)
-        self.register_buffer("scales", scales)
-
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        float_inputs = inputs.float()
-        input_scales = (float_inputs.abs().amax(dim=-1, keepdim=True) / 127.0).clamp_min(
-            torch.finfo(torch.float32).tiny
-        )
-        quantized = torch.round(float_inputs / input_scales).clamp(-127, 127)
-        output = F.linear(quantized, self.values.float())
-        return output * input_scales * self.scales
-
-
-def quantize_model(model: ThreeGSModel) -> None:
-    embedding_weight = model.token_embedding.weight.detach()
-    model.token_embedding = QuantizedEmbedding(embedding_weight)
-    model.lm_head = QuantizedLinear(embedding_weight)
-    for layer in model.layers:
-        layer.attention.q_proj = QuantizedLinear(layer.attention.q_proj.weight)
-        layer.attention.k_proj = QuantizedLinear(layer.attention.k_proj.weight)
-        layer.attention.v_proj = QuantizedLinear(layer.attention.v_proj.weight)
-        layer.attention.o_proj = QuantizedLinear(layer.attention.o_proj.weight)
-        layer.feed_forward.gate_proj = QuantizedLinear(
-            layer.feed_forward.gate_proj.weight
-        )
-        layer.feed_forward.up_proj = QuantizedLinear(
-            layer.feed_forward.up_proj.weight
-        )
-        layer.feed_forward.down_proj = QuantizedLinear(
-            layer.feed_forward.down_proj.weight
-        )
+from train import create_stream
 
 
 @torch.no_grad()
@@ -80,17 +22,20 @@ def evaluate(
     batch_size: int,
     batches: int,
     seed: int,
+    aligned_pairs: bool,
 ) -> tuple[float, float]:
     device = next(model.parameters()).device
-    stream = TokenStream(
-        data / "validation.bin",
+    stream = create_stream(
+        data,
+        "validation",
         model.config.context_length,
         seed,
-        data / "validation_response_mask.bin",
+        aligned_pairs,
     )
     all_sum = 0.0
     response_sum = 0.0
     response_count = 0.0
+    all_count = 0.0
     for _ in range(batches):
         inputs, targets, response_mask = stream.batch(batch_size, device)
         logits, _ = model(inputs)
@@ -100,11 +45,12 @@ def evaluate(
             reduction="none",
         )
         mask = response_mask.reshape(-1).float()
-        all_sum += losses.sum().item()
+        valid = targets.reshape(-1).ne(0).float()
+        all_sum += (losses * valid).sum().item()
+        all_count += valid.sum().item()
         response_sum += (losses * mask).sum().item()
         response_count += mask.sum().item()
-    token_count = batches * batch_size * model.config.context_length
-    return all_sum / token_count, response_sum / response_count
+    return all_sum / all_count, response_sum / response_count
 
 
 def report(label: str, losses: tuple[float, float]) -> None:
@@ -122,6 +68,7 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--batches", type=int, default=20)
     parser.add_argument("--seed", type=int, default=20260904)
+    parser.add_argument("--aligned-pairs", action="store_true")
     args = parser.parse_args()
 
     if not torch.cuda.is_available():
@@ -130,10 +77,24 @@ def main() -> None:
     model = ThreeGSModel(ModelConfig(**checkpoint["config"]))
     model.load_state_dict(checkpoint["model"])
     model.to("cuda").eval()
-    baseline = evaluate(model, args.data, args.batch_size, args.batches, args.seed)
+    baseline = evaluate(
+        model,
+        args.data,
+        args.batch_size,
+        args.batches,
+        args.seed,
+        args.aligned_pairs,
+    )
     report("FP32", baseline)
     quantize_model(model)
-    quantized = evaluate(model, args.data, args.batch_size, args.batches, args.seed)
+    quantized = evaluate(
+        model,
+        args.data,
+        args.batch_size,
+        args.batches,
+        args.seed,
+        args.aligned_pairs,
+    )
     report("INT8", quantized)
     print(
         f"delta: all={quantized[0] - baseline[0]:+.5f} "

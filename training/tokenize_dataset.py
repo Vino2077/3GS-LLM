@@ -20,18 +20,26 @@ def records(path: Path) -> Iterable[dict[str, object]]:
             yield json.loads(line)
 
 
-def trim_pair(parent: list[int], response: list[int], payload: int) -> tuple[list[int], list[int]]:
+def trim_pair(
+    parent: list[int],
+    response: list[int],
+    payload: int,
+    minimum_response_tokens: int = 64,
+) -> tuple[list[int], list[int]]:
     if len(parent) + len(response) <= payload:
         return parent, response
-    response_budget = min(len(response), payload // 2)
-    parent_budget = payload - response_budget
-    return parent[-parent_budget:], response[:response_budget]
+    reserved_response = min(len(response), minimum_response_tokens, payload)
+    parent_budget = min(len(parent), payload - reserved_response)
+    response_budget = min(len(response), payload - parent_budget)
+    trimmed_parent = parent[-parent_budget:] if parent_budget else []
+    return trimmed_parent, response[:response_budget]
 
 
 def write_split(
     input_path: Path,
     output_path: Path,
     mask_path: Path,
+    offsets_path: Path,
     tokenizer: Tokenizer,
     context: int,
 ) -> dict[str, int]:
@@ -45,6 +53,7 @@ def write_split(
     buffer: list[int] = []
     mask_buffer: list[int] = []
     response_tokens = 0
+    offsets = [0]
     with output_path.open("wb") as target, mask_path.open("wb") as mask_target:
         for record in tqdm(records(input_path), desc=input_path.stem, unit="pairs"):
             parent = tokenizer.encode(str(record["parent"]), add_special_tokens=False).ids
@@ -61,6 +70,7 @@ def write_split(
             count += 1
             token_count += len(sample)
             response_tokens += sum(response_mask)
+            offsets.append(token_count)
             if len(buffer) >= 1_000_000:
                 np.asarray(buffer, dtype="<u2").tofile(target)
                 np.asarray(mask_buffer, dtype="u1").tofile(mask_target)
@@ -70,11 +80,14 @@ def write_split(
             np.asarray(buffer, dtype="<u2").tofile(target)
             np.asarray(mask_buffer, dtype="u1").tofile(mask_target)
 
+    np.asarray(offsets, dtype="<u8").tofile(offsets_path)
+
     return {
         "pairs": count,
         "tokens": token_count,
         "response_tokens": response_tokens,
         "truncated_pairs": truncated,
+        "offset_count": len(offsets),
     }
 
 
@@ -92,6 +105,16 @@ def main() -> None:
         "dtype": "uint16-le",
         "context": args.context,
         "vocab_size": tokenizer.get_vocab_size(),
+        "offset_dtype": "uint64-le",
+        "special_tokens": {
+            name: tokenizer.token_to_id(f"<{name}>")
+            for name in ("pad", "bos", "eos", "user", "assistant", "unk")
+        },
+        "truncation": {
+            "prompt_side": "left",
+            "response_side": "right",
+            "minimum_response_tokens": 64,
+        },
         "splits": {},
     }
     for split, source_name in (("train", "train.jsonl.gz"), ("validation", "validation.jsonl.gz")):
@@ -99,6 +122,7 @@ def main() -> None:
             args.cleaned / source_name,
             args.output / f"{split}.bin",
             args.output / f"{split}_response_mask.bin",
+            args.output / f"{split}_offsets.bin",
             tokenizer,
             args.context,
         )

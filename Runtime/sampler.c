@@ -31,9 +31,67 @@ static int gsl_was_seen(uint16_t token, const uint16_t *history,
 void gsl_sampler_initialize(GSLSampler *sampler, uint32_t seed)
 {
     sampler->random_state = seed == 0u ? UINT32_C(0x6d2b79f5) : seed;
-    sampler->temperature = 0.8f;
-    sampler->repetition_penalty = 1.08f;
-    sampler->top_k = 40u;
+    gsl_sampler_apply_preset(sampler, GSL_SAMPLER_PRESET_C);
+}
+
+void gsl_sampler_apply_preset(GSLSampler *sampler, GSLSamplerPreset preset)
+{
+    if (sampler == NULL) {
+        return;
+    }
+    switch (preset) {
+    case GSL_SAMPLER_PRESET_A:
+        sampler->temperature = 0.45f;
+        sampler->top_k = 10u;
+        sampler->repetition_penalty = 1.0f;
+        break;
+    case GSL_SAMPLER_PRESET_B:
+        sampler->temperature = 0.25f;
+        sampler->top_k = 5u;
+        sampler->repetition_penalty = 1.0f;
+        break;
+    case GSL_SAMPLER_PRESET_C:
+        sampler->temperature = 0.6f;
+        sampler->top_k = 20u;
+        sampler->repetition_penalty = 1.02f;
+        break;
+    case GSL_SAMPLER_PRESET_NEAR_GREEDY:
+        sampler->temperature = 0.1f;
+        sampler->top_k = 3u;
+        sampler->repetition_penalty = 1.0f;
+        break;
+    case GSL_SAMPLER_PRESET_GREEDY:
+        sampler->temperature = 1.0f;
+        sampler->top_k = 1u;
+        sampler->repetition_penalty = 1.0f;
+        break;
+    case GSL_SAMPLER_PRESET_LEGACY:
+    default:
+        sampler->temperature = 0.8f;
+        sampler->top_k = 40u;
+        sampler->repetition_penalty = 1.08f;
+        break;
+    }
+}
+
+const char *gsl_sampler_preset_name(GSLSamplerPreset preset)
+{
+    switch (preset) {
+    case GSL_SAMPLER_PRESET_A:
+        return "A";
+    case GSL_SAMPLER_PRESET_B:
+        return "B";
+    case GSL_SAMPLER_PRESET_C:
+        return "C";
+    case GSL_SAMPLER_PRESET_NEAR_GREEDY:
+        return "NG";
+    case GSL_SAMPLER_PRESET_GREEDY:
+        return "G";
+    case GSL_SAMPLER_PRESET_LEGACY:
+        return "L";
+    default:
+        return "?";
+    }
 }
 
 uint16_t gsl_sampler_sample(GSLSampler *sampler, const float *logits,

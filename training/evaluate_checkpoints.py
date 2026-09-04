@@ -11,7 +11,7 @@ import torch
 import torch.nn.functional as F
 
 from model import ModelConfig, ThreeGSModel
-from train import TokenStream
+from train import create_stream
 
 
 @torch.no_grad()
@@ -21,17 +21,20 @@ def evaluate(
     batch_size: int,
     batches: int,
     seed: int,
+    aligned_pairs: bool,
 ) -> tuple[float, float]:
     device = next(model.parameters()).device
-    stream = TokenStream(
-        data / "validation.bin",
+    stream = create_stream(
+        data,
+        "validation",
         model.config.context_length,
         seed,
-        data / "validation_response_mask.bin",
+        aligned_pairs,
     )
     all_loss_sum = 0.0
     response_loss_sum = 0.0
     response_count = 0.0
+    all_count = 0.0
     model.eval()
     for _ in range(batches):
         inputs, targets, response_mask = stream.batch(batch_size, device)
@@ -42,12 +45,13 @@ def evaluate(
             targets.reshape(-1),
             reduction="none",
         )
-        all_loss_sum += losses.sum().item()
+        valid = targets.reshape(-1).ne(0).float()
+        all_loss_sum += (losses * valid).sum().item()
+        all_count += valid.sum().item()
         mask = response_mask.reshape(-1).float()
         response_loss_sum += (losses * mask).sum().item()
         response_count += mask.sum().item()
-    token_count = batches * batch_size * model.config.context_length
-    return all_loss_sum / token_count, response_loss_sum / response_count
+    return all_loss_sum / all_count, response_loss_sum / response_count
 
 
 def main() -> None:
@@ -57,6 +61,11 @@ def main() -> None:
     parser.add_argument("--batch-size", type=int, default=64)
     parser.add_argument("--batches", type=int, default=100)
     parser.add_argument("--seed", type=int, default=20260904)
+    parser.add_argument(
+        "--aligned-pairs",
+        action="store_true",
+        help="evaluate complete pairs using *_offsets.bin instead of random windows",
+    )
     args = parser.parse_args()
 
     if not torch.cuda.is_available():
@@ -69,7 +78,12 @@ def main() -> None:
             raise ValueError(f"model configuration mismatch: {path}")
         model.load_state_dict(checkpoint["model"])
         all_loss, response_loss = evaluate(
-            model, args.data, args.batch_size, args.batches, args.seed
+            model,
+            args.data,
+            args.batch_size,
+            args.batches,
+            args.seed,
+            args.aligned_pairs,
         )
         print(
             f"step={int(checkpoint['step']):5d} "

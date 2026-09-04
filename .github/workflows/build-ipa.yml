@@ -35,8 +35,15 @@ jobs:
           cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/decoder.c -o /tmp/decoder.o
           cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/sampler.c -o /tmp/sampler.o
           cc -std=c99 -O2 -Wall -Wextra -Werror \
+            Tests/test_sampler.c Runtime/sampler.c -lm \
+            -o /tmp/test-sampler
+          /tmp/test-sampler
+          cc -std=c99 -O2 -Wall -Wextra -Werror \
             Tests/test_tokenizer.c Runtime/tokenizer.c \
             -o /tmp/test-tokenizer-loader
+          cc -std=c99 -O2 -Wall -Wextra -Werror \
+            Tests/runtime_trace.c Runtime/decoder.c Runtime/model_format.c \
+            Runtime/int8_gemv.c -lm -o /tmp/runtime-trace
           python3 -m py_compile training/*.py Scripts/*.py
 
       - name: Install build dependencies

@@ -83,12 +83,28 @@
     [root release];
 
     self.title = @"3GS-LLM";
+    _samplerPreset = GSL_SAMPLER_PRESET_C;
+    self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc]
+        initWithTitle:@"Сэмпл: C"
+                style:UIBarButtonItemStyleBordered
+               target:self
+               action:@selector(cycleSamplingPreset:)] autorelease];
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc]
         initWithTitle:@"Тест"
                 style:UIBarButtonItemStyleBordered
                target:self
                action:@selector(showBenchmark:)] autorelease];
     [self loadModelInBackground];
+}
+
+- (void)cycleSamplingPreset:(id)sender
+{
+    (void)sender;
+    _samplerPreset = (GSLSamplerPreset)(
+        ((unsigned)_samplerPreset + 1u) % (unsigned)GSL_SAMPLER_PRESET_COUNT
+    );
+    self.navigationItem.leftBarButtonItem.title = [NSString stringWithFormat:
+        @"Сэмпл: %s", gsl_sampler_preset_name(_samplerPreset)];
 }
 
 - (void)viewDidLoad
@@ -228,6 +244,7 @@
     self.inputField.text = @"";
     self.inputField.enabled = NO;
     self.sendButton.enabled = NO;
+    self.navigationItem.leftBarButtonItem.enabled = NO;
     [self.inputField resignFirstResponder];
     self.conversationView.text = [NSString stringWithFormat:
         @"Вы: %@\n\n3GS-LM: …", prompt];
@@ -270,6 +287,7 @@
     }
 
     gsl_sampler_initialize(&sampler, (uint32_t)time(NULL));
+    gsl_sampler_apply_preset(&sampler, _samplerPreset);
     for (index = 0u; success && index < GSL_MAX_NEW_TOKENS; ++index) {
         uint16_t token;
         logits[0] = -FLT_MAX;
@@ -321,6 +339,7 @@
         : @"Ошибка генерации";
     self.inputField.enabled = YES;
     self.sendButton.enabled = YES;
+    self.navigationItem.leftBarButtonItem.enabled = YES;
     [self.inputField becomeFirstResponder];
 }
 

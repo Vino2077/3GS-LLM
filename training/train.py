@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train 3GS-LM-17M from a packed uint16 token stream."""
+"""Train 3GS-LM-17M from packed windows or complete aligned pairs."""
 
 from __future__ import annotations
 
@@ -41,10 +41,88 @@ class TokenStream:
         return tensor[:, :-1], tensor[:, 1:], mask_tensor
 
 
+class AlignedPairStream:
+    """Random batches of complete BOS/USER/ASSISTANT/EOS pairs."""
+
+    def __init__(
+        self,
+        path: Path,
+        context: int,
+        seed: int,
+        mask_path: Path,
+        offsets_path: Path,
+        pad_token_id: int = 0,
+    ) -> None:
+        self.tokens = np.memmap(path, mode="r", dtype="<u2")
+        self.response_mask = np.memmap(mask_path, mode="r", dtype="u1")
+        self.offsets = np.memmap(offsets_path, mode="r", dtype="<u8")
+        if len(self.tokens) != len(self.response_mask):
+            raise ValueError(f"token/mask length mismatch: {path}")
+        if len(self.offsets) < 2 or self.offsets[0] != 0:
+            raise ValueError(f"invalid aligned-pair offsets: {offsets_path}")
+        if int(self.offsets[-1]) != len(self.tokens):
+            raise ValueError(f"offsets do not cover token stream: {offsets_path}")
+        lengths = np.diff(self.offsets)
+        if int(lengths.max()) > context or int(lengths.min()) < 5:
+            raise ValueError(f"aligned sample length is invalid: {offsets_path}")
+        self.context = context
+        self.pad_token_id = pad_token_id
+        self.rng = np.random.default_rng(seed)
+
+    def batch(
+        self, size: int, device: torch.device
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        indices = self.rng.integers(0, len(self.offsets) - 1, size=size)
+        ranges = [
+            (int(self.offsets[index]), int(self.offsets[index + 1]))
+            for index in indices
+        ]
+        width = max(end - start for start, end in ranges)
+        samples = np.full((size, width), self.pad_token_id, dtype=np.int64)
+        masks = np.zeros((size, width - 1), dtype=np.uint8)
+        for row, (start, end) in enumerate(ranges):
+            length = end - start
+            samples[row, :length] = self.tokens[start:end]
+            masks[row, : length - 1] = self.response_mask[start + 1 : end]
+        tensor = torch.from_numpy(samples).to(device, non_blocking=True)
+        mask_tensor = torch.from_numpy(masks).to(device, non_blocking=True)
+        return tensor[:, :-1], tensor[:, 1:], mask_tensor
+
+
+def create_stream(
+    data: Path,
+    split: str,
+    context: int,
+    seed: int,
+    aligned_pairs: bool,
+) -> TokenStream | AlignedPairStream:
+    token_path = data / f"{split}.bin"
+    mask_path = data / f"{split}_response_mask.bin"
+    if not aligned_pairs:
+        return TokenStream(token_path, context, seed, mask_path)
+    offsets_path = data / f"{split}_offsets.bin"
+    if not offsets_path.exists():
+        raise RuntimeError(
+            f"{offsets_path} is missing; rerun tokenize_dataset.py so "
+            "response-only training can use complete aligned pairs"
+        )
+    metadata_path = data / "dataset_meta.json"
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    pad_token_id = int(metadata.get("special_tokens", {}).get("pad", 0))
+    return AlignedPairStream(
+        token_path,
+        context,
+        seed,
+        mask_path,
+        offsets_path,
+        pad_token_id,
+    )
+
+
 @torch.no_grad()
 def evaluate(
     model: ThreeGSModel,
-    stream: TokenStream,
+    stream: TokenStream | AlignedPairStream,
     batch_size: int,
     batches: int,
     device: torch.device,
@@ -82,7 +160,10 @@ def main() -> None:
     parser.add_argument(
         "--response-only",
         action="store_true",
-        help="compute loss only on assistant response and EOS tokens",
+        help=(
+            "train on complete aligned pairs and compute loss only on assistant "
+            "response and EOS tokens"
+        ),
     )
     parser.add_argument(
         "--initial-weights",
@@ -126,22 +207,32 @@ def main() -> None:
         assert initial is not None
         if bool(initial.get("response_only")) != args.response_only:
             raise ValueError("resume checkpoint uses a different loss mode")
+        expected_mode = "aligned_pairs" if args.response_only else "packed_stream"
+        saved_mode = initial.get("data_mode")
+        if saved_mode is None:
+            saved_mode = (
+                "legacy_random_windows" if args.response_only else "packed_stream"
+            )
+        if saved_mode != expected_mode:
+            raise ValueError("resume checkpoint uses a different data mode")
         optimizer.load_state_dict(initial["optimizer"])
         start_step = int(initial["step"])
         if start_step >= args.steps:
             raise ValueError("resume checkpoint has already reached --steps")
         print(f"resuming optimizer at step {start_step}")
-    train_stream = TokenStream(
-        args.data / "train.bin",
+    train_stream = create_stream(
+        args.data,
+        "train",
         config.context_length,
         args.seed,
-        args.data / "train_response_mask.bin",
+        args.response_only,
     )
-    validation_stream = TokenStream(
-        args.data / "validation.bin",
+    validation_stream = create_stream(
+        args.data,
+        "validation",
         config.context_length,
         args.seed + 1,
-        args.data / "validation_response_mask.bin",
+        args.response_only,
     )
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "config.json").write_text(
@@ -223,6 +314,7 @@ def main() -> None:
                 "model": model.state_dict(),
                 "optimizer": optimizer.state_dict(),
                 "response_only": args.response_only,
+                "data_mode": "aligned_pairs" if args.response_only else "packed_stream",
             }
             temporary = args.output / "checkpoint.tmp"
             final = args.output / f"checkpoint-{step:05d}.pt"

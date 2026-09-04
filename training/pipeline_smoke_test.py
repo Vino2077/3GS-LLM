@@ -9,6 +9,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import numpy as np
 import pyarrow as pa
 import pyarrow.parquet as pq
 
@@ -98,8 +99,12 @@ def main() -> None:
         for split in ("train", "validation"):
             token_bytes = (tokens / f"{split}.bin").stat().st_size
             mask_bytes = (tokens / f"{split}_response_mask.bin").stat().st_size
+            offsets = np.fromfile(tokens / f"{split}_offsets.bin", dtype="<u8")
             assert token_bytes == mask_bytes * 2
             assert metadata["splits"][split]["pairs"] > 0
+            assert len(offsets) == metadata["splits"][split]["pairs"] + 1
+            assert offsets[0] == 0 and offsets[-1] == mask_bytes
+            assert np.diff(offsets).max() <= metadata["context"]
         print("pipeline smoke test passed")
 
 

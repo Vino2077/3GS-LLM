@@ -10,21 +10,7 @@ import torch
 from tokenizers import Tokenizer
 
 from model import ModelConfig, ThreeGSModel
-
-
-def sample_token(
-    logits: torch.Tensor,
-    temperature: float,
-    top_k: int,
-    generator: torch.Generator,
-) -> int:
-    logits = logits.float() / temperature
-    if top_k > 0:
-        count = min(top_k, logits.numel())
-        threshold = torch.topk(logits, count).values[-1]
-        logits = logits.masked_fill(logits < threshold, float("-inf"))
-    probabilities = torch.softmax(logits, dim=-1)
-    return int(torch.multinomial(probabilities, 1, generator=generator).item())
+from sampling import PRESETS, SamplingPreset, generate_reply
 
 
 def main() -> None:
@@ -33,8 +19,10 @@ def main() -> None:
     parser.add_argument("tokenizer", type=Path)
     parser.add_argument("prompt")
     parser.add_argument("--max-new-tokens", type=int, default=96)
-    parser.add_argument("--temperature", type=float, default=0.8)
-    parser.add_argument("--top-k", type=int, default=50)
+    parser.add_argument("--temperature", type=float, default=0.6)
+    parser.add_argument("--top-k", type=int, default=20)
+    parser.add_argument("--repetition-penalty", type=float, default=1.02)
+    parser.add_argument("--preset", choices=sorted(PRESETS))
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--device", choices=("cuda", "cpu"), default="cuda")
     args = parser.parse_args()
@@ -51,45 +39,18 @@ def main() -> None:
     model.load_state_dict(checkpoint["model"])
     model.to(device).eval()
     tokenizer = Tokenizer.from_file(str(args.tokenizer))
-    special = {
-        name: tokenizer.token_to_id(f"<{name}>")
-        for name in ("bos", "eos", "user", "assistant")
-    }
-    if any(identifier is None for identifier in special.values()):
-        raise RuntimeError("tokenizer lacks a required special token")
 
-    prompt_tokens = tokenizer.encode(
-        args.prompt, add_special_tokens=False
-    ).ids[-(config.context_length - 3) :]
-    tokens = [
-        special["bos"],
-        special["user"],
-        *prompt_tokens,
-        special["assistant"],
-    ]
-    prefix_length = len(tokens)
-    generator = torch.Generator(device=device).manual_seed(args.seed)
-    dtype = torch.bfloat16 if device.type == "cuda" else torch.float32
-
-    with torch.inference_mode():
-        for _ in range(args.max_new_tokens):
-            window = tokens[-config.context_length :]
-            inputs = torch.tensor([window], dtype=torch.long, device=device)
-            with torch.autocast(
-                device_type=device.type,
-                dtype=dtype,
-                enabled=device.type == "cuda",
-            ):
-                logits, _ = model(inputs)
-            token = sample_token(
-                logits[0, -1], args.temperature, args.top_k, generator
-            )
-            if token == special["eos"]:
-                break
-            tokens.append(token)
-
-    answer_ids = tokens[prefix_length:]
-    print(tokenizer.decode(answer_ids, skip_special_tokens=True))
+    preset = PRESETS[args.preset] if args.preset else SamplingPreset(
+        "custom",
+        args.temperature,
+        args.top_k,
+        args.repetition_penalty,
+        greedy=args.top_k == 1,
+    )
+    result = generate_reply(
+        model, tokenizer, args.prompt, preset, args.seed, args.max_new_tokens
+    )
+    print(result.text)
 
 
 if __name__ == "__main__":
