@@ -30,6 +30,7 @@ jobs:
             Tests/test_int8_gemv.c Runtime/int8_gemv.c \
             -o /tmp/test-int8-gemv
           /tmp/test-int8-gemv
+          python3 -m py_compile training/*.py Scripts/*.py
 
       - name: Install build dependencies
         run: |

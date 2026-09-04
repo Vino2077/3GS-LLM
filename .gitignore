@@ -5,3 +5,9 @@ packages/
 *.deb
 DerivedData/
 .DS_Store
+__pycache__/
+*.pyc
+training-data/
+checkpoints/
+*.pt
+*.bin
