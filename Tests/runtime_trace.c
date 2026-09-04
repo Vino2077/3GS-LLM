@@ -12,7 +12,11 @@ static unsigned char *read_file(const char *path, size_t *length)
     FILE *source = fopen(path, "rb");
     unsigned char *bytes;
     long size;
-    if (source == NULL || fseek(source, 0, SEEK_END) != 0) {
+    if (source == NULL) {
+        return NULL;
+    }
+    if (fseek(source, 0, SEEK_END) != 0) {
+        fclose(source);
         return NULL;
     }
     size = ftell(source);
@@ -92,7 +96,7 @@ static void print_top(size_t step, const float *logits)
 int main(int argc, char **argv)
 {
     unsigned char *container;
-    size_t container_length;
+    size_t container_length = 0u;
     GSLModelWeights weights;
     GSLDecoder *decoder;
     uint16_t prefix[GSL_CONTEXT_LENGTH];
