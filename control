@@ -1,6 +1,6 @@
 Package: com.vino2077.threegsllm
 Name: 3GS-LLM
-Version: 0.0.2
+Version: 0.0.3
 Architecture: iphoneos-arm
 Description: Offline tiny language model experiments for iPhone 3GS.
 Maintainer: Vino2077

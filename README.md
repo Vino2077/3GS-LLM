@@ -3,17 +3,15 @@
 A tiny, fully offline text-generation runtime for the iPhone 3GS running
 iOS 6.1.6.
 
-The project is deliberately starting with a hardware benchmark. Before a model
-architecture is frozen, the real phone must tell us how quickly its 600 MHz
-Cortex-A8 can execute the three INT8 matrix-vector shapes that will dominate
-token generation.
+The architecture was selected from measurements on the real phone. The app is
+now a local chat UI backed by a C99 transformer decoder; the hardware benchmark
+remains available from the navigation bar.
 
-## Current milestone: 17M-parameter candidate benchmark
+## Current milestone: training and native runtime
 
 The first hardware run measured 269--416 MMAC/s on a real iPhone 3GS. That is
 fast enough to test a substantially more useful model than the original
-2M-parameter concept. The current IPA measures the exact dense projections for
-the proposed `3GS-LM-17M` shape:
+2M-parameter concept. The frozen `3GS-LM-17M` shape is:
 
 - model width 384, 8 transformer layers, 6 attention heads;
 - SwiGLU feed-forward width 1024;
@@ -21,10 +19,17 @@ the proposed `3GS-LM-17M` shape:
 - 256-token context;
 - approximately 17.3M parameters and 17.5 MB of quantized weights.
 
-The app verifies the optimized dot product against a scalar implementation,
-reports every candidate matrix shape, and estimates the dense kernel time per
-generated token. Attention, normalization, tokenizer and sampling overhead are
-intentionally not included yet.
+The training pipeline cleans and tokenizes the
+[DTF Comments Responses Counts](https://huggingface.co/datasets/SubMaroon/DTF_Comments_Responses_Counts)
+dataset into 709,499 train pairs and 6,604 validation pairs. The native runtime
+implements mapped binary model loading, byte-level BPE, a float KV cache,
+RMSNorm, RoPE, causal attention, SwiGLU, top-k sampling, and row-wise INT8 NEON
+matrix-vector products.
+
+The dataset card does not declare a license. Source rows and trained weights are
+therefore kept out of this public repository. A CI build is an asset-free app
+shell; final personal-test IPAs are assembled locally by injecting the validated
+model and tokenizer containers after the executable is built.
 
 ## Build target
 
@@ -38,7 +43,7 @@ intentionally not included yet.
 ## Downloading a build
 
 Every push to `main` starts the **Build iOS 6 IPA** GitHub Actions workflow.
-Open the workflow run, download the `3GS-LLM-IPA` artifact, and extract the IPA.
+The `3GS-LLM-IPA` artifact intentionally does not contain trained weights.
 
 ## Local build
 
@@ -51,10 +56,10 @@ make clean package FINALPACKAGE=1
 
 The package is written to `packages/`.
 
-## Planned path
+## Project path
 
-1. Measure the real 3GS and record a performance baseline.
-2. Implement the model file format, tokenizer, sampling, and KV cache.
-3. Train a deliberately tiny Russian/English model on a modern computer.
+1. Measure the real 3GS and record a performance baseline. Done.
+2. Implement the model file format, tokenizer, sampling, and KV cache. Done.
+3. Train the 17.3M-parameter model on the DTF reply corpus. In progress.
 4. Quantize weights to INT8 and validate output against the reference runtime.
-5. Integrate streaming local generation into the iOS 6 interface.
+5. Inject the assets into the iOS 6 chat shell and test on the real device.

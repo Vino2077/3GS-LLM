@@ -17,7 +17,7 @@ roughly 3--5 words per second after full runtime overhead.
 | Positional encoding | RoPE |
 | Normalization | RMSNorm |
 | Weight format | Per-row symmetric INT8 |
-| KV cache target | INT8 with per-token scales |
+| KV cache | FP32, 6 MB |
 | Tied token embedding / LM head | Yes |
 
 ## Parameter estimate
@@ -28,8 +28,8 @@ roughly 3--5 words per second after full runtime overhead.
 - two RMSNorm vectors per layer: `768`;
 - eight layers plus final norm: approximately `17,308,032` parameters.
 
-The quantized model should occupy about 17.5 MB including per-row scales. An
-INT8 KV cache at 256 tokens costs roughly 1.6 MB. Both leave ample room for the
+The quantized model occupies about 16.7 MB including per-row scales. An FP32
+KV cache at 256 tokens costs roughly 6 MB. Both leave ample room for the
 iOS process, tokenizer, scratch buffers, and the interface within the device's
 256 MB physical memory.
 

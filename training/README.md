@@ -23,6 +23,10 @@ python training/train.py C:\path\to\tokens C:\path\to\response-checkpoints `
   --response-only --initial-weights C:\path\to\checkpoints\checkpoint-06000.pt
 ```
 
+An interrupted stage can be continued with `--resume checkpoint-NNNNN.pt` and
+the same final `--steps` and schedule arguments. This restores both model and
+AdamW optimizer state.
+
 The cleaning split is grouped by a stable hash of the post title, so replies
 from the same DTF post do not leak randomly between training and validation.
 Deleted-comment markers, exact child-ID duplicates, echoes, and sequences too

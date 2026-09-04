@@ -89,7 +89,14 @@ def main() -> None:
         type=Path,
         help="checkpoint whose model weights initialize this training stage",
     )
+    parser.add_argument(
+        "--resume",
+        type=Path,
+        help="resume model and optimizer state; --steps remains the final step",
+    )
     args = parser.parse_args()
+    if args.initial_weights and args.resume:
+        parser.error("--initial-weights and --resume are mutually exclusive")
 
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU is required for the full training run")
@@ -99,12 +106,15 @@ def main() -> None:
     device = torch.device("cuda")
     config = ModelConfig()
     model = ThreeGSModel(config).to(device)
-    if args.initial_weights:
-        initial = torch.load(args.initial_weights, map_location="cpu", weights_only=True)
+    start_step = 0
+    initial_path = args.resume or args.initial_weights
+    initial = None
+    if initial_path:
+        initial = torch.load(initial_path, map_location="cpu", weights_only=True)
         if initial.get("config") != config.to_dict():
             raise ValueError("initial checkpoint uses a different model configuration")
         model.load_state_dict(initial["model"])
-        print(f"loaded initial model weights from {args.initial_weights}")
+        print(f"loaded initial model weights from {initial_path}")
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=args.learning_rate,
@@ -112,6 +122,15 @@ def main() -> None:
         weight_decay=0.1,
         fused=True,
     )
+    if args.resume:
+        assert initial is not None
+        if bool(initial.get("response_only")) != args.response_only:
+            raise ValueError("resume checkpoint uses a different loss mode")
+        optimizer.load_state_dict(initial["optimizer"])
+        start_step = int(initial["step"])
+        if start_step >= args.steps:
+            raise ValueError("resume checkpoint has already reached --steps")
+        print(f"resuming optimizer at step {start_step}")
     train_stream = TokenStream(
         args.data / "train.bin",
         config.context_length,
@@ -143,7 +162,7 @@ def main() -> None:
     )
     started = time.perf_counter()
     model.train()
-    for step in range(1, args.steps + 1):
+    for step in range(start_step + 1, args.steps + 1):
         if step <= args.warmup_steps:
             learning_rate = args.learning_rate * step / args.warmup_steps
         else:
@@ -178,7 +197,7 @@ def main() -> None:
 
         if step == 1 or step % 10 == 0:
             elapsed = time.perf_counter() - started
-            processed = step * tokens_per_step
+            processed = (step - start_step) * tokens_per_step
             print(
                 f"step={step:5d} loss={accumulated_loss / args.gradient_accumulation:.4f} "
                 f"lr={learning_rate:.2e} grad={float(gradient_norm):.3f} "

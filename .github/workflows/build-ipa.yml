@@ -30,6 +30,13 @@ jobs:
             Tests/test_int8_gemv.c Runtime/int8_gemv.c \
             -o /tmp/test-int8-gemv
           /tmp/test-int8-gemv
+          cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/tokenizer.c -o /tmp/tokenizer.o
+          cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/model_format.c -o /tmp/model-format.o
+          cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/decoder.c -o /tmp/decoder.o
+          cc -std=c99 -O2 -Wall -Wextra -Werror -c Runtime/sampler.c -o /tmp/sampler.o
+          cc -std=c99 -O2 -Wall -Wextra -Werror \
+            Tests/test_tokenizer.c Runtime/tokenizer.c \
+            -o /tmp/test-tokenizer-loader
           python3 -m py_compile training/*.py Scripts/*.py
 
       - name: Install build dependencies

@@ -10,8 +10,14 @@ APPLICATION_NAME := ThreeGSLLM
 ThreeGSLLM_FILES := \
 	main.m \
 	Sources/GSLAppDelegate.m \
+	Sources/GSLChatViewController.m \
 	Sources/GSLBenchmarkViewController.m \
+	Sources/GSLTokenizerBridge.m \
 	Runtime/int8_gemv.c \
+	Runtime/model_format.c \
+	Runtime/tokenizer.c \
+	Runtime/decoder.c \
+	Runtime/sampler.c \
 	Runtime/benchmark.c
 ThreeGSLLM_FRAMEWORKS := UIKit CoreGraphics Foundation
 ThreeGSLLM_CFLAGS := -std=gnu11 -O3 -fno-objc-arc -fblocks -marm -mfpu=neon -Wall -Wextra

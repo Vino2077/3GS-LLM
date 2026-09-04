@@ -1,5 +1,5 @@
 #import "GSLAppDelegate.h"
-#import "GSLBenchmarkViewController.h"
+#import "GSLChatViewController.h"
 
 @implementation GSLAppDelegate
 
@@ -12,8 +12,8 @@
     (void)application;
     (void)launchOptions;
 
-    GSLBenchmarkViewController *controller =
-        [[GSLBenchmarkViewController alloc] init];
+    GSLChatViewController *controller =
+        [[GSLChatViewController alloc] init];
     UINavigationController *navigation =
         [[UINavigationController alloc] initWithRootViewController:controller];
     [controller release];
