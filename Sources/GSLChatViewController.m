@@ -35,7 +35,7 @@
     conversation.editable = NO;
     conversation.font = [UIFont systemFontOfSize:14.0f];
     conversation.text = @"Полностью локальная 3GS-LM\n\n"
-                         @"Модель обучена на ответах из комментариев DTF. "
+                         @"DTF-язык + локальный Stage 3 для более прямых ответов. "
                          @"Она может ошибаться и использовать грубую лексику.";
     [root addSubview:conversation];
 
@@ -83,9 +83,9 @@
     [root release];
 
     self.title = @"3GS-LLM";
-    _samplerPreset = GSL_SAMPLER_PRESET_C;
+    _samplerPreset = GSL_SAMPLER_PRESET_A;
     self.navigationItem.leftBarButtonItem = [[[UIBarButtonItem alloc]
-        initWithTitle:@"Сэмпл: C"
+        initWithTitle:@"Сэмпл: A"
                 style:UIBarButtonItemStyleBordered
                target:self
                action:@selector(cycleSamplingPreset:)] autorelease];

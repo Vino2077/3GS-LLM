@@ -161,6 +161,10 @@ high-like originals into distilled SFT.
 
 ## Distillation and quality SFT
 
+For the current semantic-quality experiment, teacher calibration, multi-seed
+evaluation and prefix-weighted loss, see [STAGE3.md](STAGE3.md). The legacy
+commands below describe the interchange format, not a completed Stage 3 run.
+
 Select 30k-100k unique real parent comments without copying their child reply:
 
 ```powershell

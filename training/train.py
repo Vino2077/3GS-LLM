@@ -13,6 +13,7 @@ import numpy as np
 import torch
 
 from model import ModelConfig, ThreeGSModel
+from conditional_loss import ranking_loss
 
 
 class TokenStream:
@@ -119,6 +120,14 @@ def create_stream(
     )
 
 
+def prefix_loss_weights(mask: torch.Tensor, targets: torch.Tensor,
+                        prefix_tokens: int, prefix_weight: float) -> torch.Tensor:
+    """Weight only the first response tokens, never USER, padding or EOS (id 2)."""
+    weights = mask.float()
+    prefix = (mask.cumsum(dim=1) <= prefix_tokens) & mask.bool() & (targets != 2)
+    return torch.where(prefix, weights * prefix_weight, weights)
+
+
 @torch.no_grad()
 def evaluate(
     model: ThreeGSModel,
@@ -157,6 +166,12 @@ def main() -> None:
     parser.add_argument("--eval-batches", type=int, default=20)
     parser.add_argument("--save-interval", type=int, default=500)
     parser.add_argument("--seed", type=int, default=1337)
+    parser.add_argument("--response-prefix-tokens", type=int, default=16)
+    parser.add_argument("--response-prefix-weight", type=float, default=1.0)
+    parser.add_argument("--allow-strong-prefix-experiment", action="store_true",
+                        help="explicitly allow weights up to 8 for a short response-start pilot")
+    parser.add_argument("--contrastive-weight", type=float, default=0.0)
+    parser.add_argument("--contrastive-margin", type=float, default=0.25)
     parser.add_argument(
         "--response-only",
         action="store_true",
@@ -178,6 +193,15 @@ def main() -> None:
     args = parser.parse_args()
     if args.initial_weights and args.resume:
         parser.error("--initial-weights and --resume are mutually exclusive")
+    maximum_weight = 8 if args.allow_strong_prefix_experiment else 2
+    if not 1 <= args.response_prefix_weight <= maximum_weight or not 0 <= args.response_prefix_tokens <= 24:
+        parser.error("prefix weight must be 1..2 (explicit experiment: up to 8), prefix tokens 0..24")
+    if args.response_prefix_weight != 1 and not args.response_only:
+        parser.error("prefix weighting requires --response-only")
+    if not 0 <= args.contrastive_weight <= .5 or args.contrastive_margin < 0:
+        parser.error("contrastive weight must be 0..0.5 and margin nonnegative")
+    if args.contrastive_weight and (not args.response_only or args.batch_size < 2):
+        parser.error("contrastive experiment requires aligned batches of at least 2")
 
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA GPU is required for the full training run")
@@ -215,6 +239,11 @@ def main() -> None:
             )
         if saved_mode != expected_mode:
             raise ValueError("resume checkpoint uses a different data mode")
+        if initial.get("response_prefix_weight", 1.0) != args.response_prefix_weight or initial.get("response_prefix_tokens", 16) != args.response_prefix_tokens:
+            raise ValueError("resume checkpoint uses different prefix weighting")
+        for key, default in (("contrastive_weight", 0.0), ("contrastive_margin", .25)):
+            if initial.get("training_args", {}).get(key, default) != getattr(args, key):
+                raise ValueError("resume checkpoint uses different contrastive settings")
         optimizer.load_state_dict(initial["optimizer"])
         start_step = int(initial["step"])
         if start_step >= args.steps:
@@ -234,6 +263,11 @@ def main() -> None:
         args.seed + 1,
         args.response_only,
     )
+    if args.resume and initial is not None and "rng_state" in initial:
+        train_stream.rng.bit_generator.state = initial["rng_state"]["train"]
+        validation_stream.rng.bit_generator.state = initial["rng_state"]["validation"]
+        torch.set_rng_state(initial["rng_state"]["torch"])
+        torch.cuda.set_rng_state_all(initial["rng_state"]["cuda"])
     args.output.mkdir(parents=True, exist_ok=True)
     (args.output / "config.json").write_text(
         json.dumps(config.to_dict(), indent=2) + "\n", encoding="utf-8"
@@ -274,12 +308,17 @@ def main() -> None:
                 args.batch_size, device
             )
             with autocast():
-                _, loss = model(
+                loss_weights = prefix_loss_weights(response_mask, targets,
+                    args.response_prefix_tokens, args.response_prefix_weight) if args.response_only else None
+                logits, loss = model(
                     inputs,
                     targets,
-                    response_mask if args.response_only else None,
+                    loss_weights,
                 )
                 assert loss is not None
+                if args.contrastive_weight:
+                    loss = loss + args.contrastive_weight * ranking_loss(
+                        model, logits, inputs, targets, response_mask, args.contrastive_margin)
                 scaled_loss = loss / args.gradient_accumulation
             scaled_loss.backward()
             accumulated_loss += loss.detach().float().item()
@@ -315,6 +354,12 @@ def main() -> None:
                 "optimizer": optimizer.state_dict(),
                 "response_only": args.response_only,
                 "data_mode": "aligned_pairs" if args.response_only else "packed_stream",
+                "response_prefix_weight": args.response_prefix_weight,
+                "response_prefix_tokens": args.response_prefix_tokens,
+                "training_args": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
+                "rng_state": {"train": train_stream.rng.bit_generator.state,
+                    "validation": validation_stream.rng.bit_generator.state,
+                    "torch": torch.get_rng_state(), "cuda": torch.cuda.get_rng_state_all()},
             }
             temporary = args.output / "checkpoint.tmp"
             final = args.output / f"checkpoint-{step:05d}.pt"

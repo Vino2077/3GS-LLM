@@ -86,5 +86,5 @@ The package is written to `packages/`.
 4. Quantize weights to INT8 and validate output against the reference runtime. Done.
 5. Inject the assets into the iOS 6 chat shell. Done.
 6. Add aligned SFT, distillation, fixed-prompt evaluation, and sampler presets. Done.
-7. Train and select the next aligned/distilled checkpoint.
+7. Train and select the Stage 3 quality checkpoint. Done (v0.0.5).
 8. Test generation speed, stability, and replies on the real device.

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "human-00",
+    "category": "final_human",
+    "prompt": "Скайрим вечен?",
+    "split": "final"
+  },
+  {
+    "id": "human-01",
+    "category": "final_human",
+    "prompt": "Скайрим играл?",
+    "split": "final"
+  },
+  {
+    "id": "human-02",
+    "category": "final_human",
+    "prompt": "Ласт оф ас 2 хорошая игра?",
+    "split": "final"
+  },
+  {
+    "id": "human-03",
+    "category": "final_human",
+    "prompt": "Киберпанк 2077 великая игра",
+    "split": "final"
+  },
+  {
+    "id": "human-04",
+    "category": "final_human",
+    "prompt": "Грангер лучший персонаж",
+    "split": "final"
+  },
+  {
+    "id": "human-05",
+    "category": "final_human",
+    "prompt": "Ты кто?",
+    "split": "final"
+  },
+  {
+    "id": "human-06",
+    "category": "final_human",
+    "prompt": "Скажи что-нибудь как истинный дтфер",
+    "split": "final"
+  },
+  {
+    "id": "human-07",
+    "category": "final_human",
+    "prompt": "Стоит покупать новый айфон?",
+    "split": "final"
+  },
+  {
+    "id": "human-08",
+    "category": "final_human",
+    "prompt": "Ведьмак 3 переоценён",
+    "split": "final"
+  },
+  {
+    "id": "human-09",
+    "category": "final_human",
+    "prompt": "Почему люди любят Дарк Соулс?",
+    "split": "final"
+  },
+  {
+    "id": "human-10",
+    "category": "final_human",
+    "prompt": "Как дела?",
+    "split": "final"
+  },
+  {
+    "id": "human-11",
+    "category": "final_human",
+    "prompt": "Что думаешь о Minecraft?",
+    "split": "final"
+  }
+]

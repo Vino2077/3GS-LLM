@@ -59,6 +59,8 @@ def main() -> None:
     parser.add_argument("--max-response-chars", type=int, default=600)
     parser.add_argument("--max-sentences", type=int, default=3)
     parser.add_argument("--exclude-prompts", type=Path)
+    parser.add_argument("--allow-resampling-duplicates", action="store_true",
+                        help="retain explicit mixture oversampling; duplicates are reported, not counted as new examples")
     args = parser.parse_args()
     if not 1 <= args.validation_percent <= 20:
         parser.error("--validation-percent must be between 1 and 20")
@@ -92,8 +94,10 @@ def main() -> None:
                 continue
             identity = (prompt.casefold(), response.casefold())
             if identity in seen:
-                stats["removed_duplicate"] += 1
-                continue
+                if not args.allow_resampling_duplicates:
+                    stats["removed_duplicate"] += 1
+                    continue
+                stats["resampled_duplicate"] += 1
             seen.add(identity)
             output_record = {
                 "parent": prompt,

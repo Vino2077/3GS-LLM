@@ -1,0 +1,938 @@
+[
+  {
+    "id": "games-00",
+    "category": "games",
+    "prompt": "Сталкер без багов вообще бывает?",
+    "split": "development"
+  },
+  {
+    "id": "games-01",
+    "category": "games",
+    "prompt": "Портал 2 до сих пор стоит пройти?",
+    "split": "development"
+  },
+  {
+    "id": "games-02",
+    "category": "games",
+    "prompt": "Зачем в гонках открытый мир?",
+    "split": "development"
+  },
+  {
+    "id": "games-03",
+    "category": "games",
+    "prompt": "Хочу короткую игру на вечер, а не вторую работу.",
+    "split": "development"
+  },
+  {
+    "id": "games-04",
+    "category": "games",
+    "prompt": "В играх слишком много одинаковых аванпостов.",
+    "split": "development"
+  },
+  {
+    "id": "games-05",
+    "category": "games",
+    "prompt": "Тебе ближе пошаговые бои или экшен?",
+    "split": "development"
+  },
+  {
+    "id": "games-06",
+    "category": "games",
+    "prompt": "Ремейк старой игры может быть лучше оригинала?",
+    "split": "development"
+  },
+  {
+    "id": "games-07",
+    "category": "games",
+    "prompt": "Меня утомляют ежедневные задания в играх.",
+    "split": "development"
+  },
+  {
+    "id": "games-08",
+    "category": "games",
+    "prompt": "Зачем играть на максимальной сложности?",
+    "split": "development"
+  },
+  {
+    "id": "games-09",
+    "category": "games",
+    "prompt": "Кооператив делает плохую игру веселее?",
+    "split": "development"
+  },
+  {
+    "id": "games-10",
+    "category": "games",
+    "prompt": "Не люблю крафт ради крафта.",
+    "split": "development"
+  },
+  {
+    "id": "games-11",
+    "category": "games",
+    "prompt": "Ранний доступ — шанс или лотерея?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-00",
+    "category": "cinema",
+    "prompt": "Тебе нравятся фильмы с открытым финалом?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-01",
+    "category": "cinema",
+    "prompt": "Хорроры без скримеров бывают страшными?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-02",
+    "category": "cinema",
+    "prompt": "Не понимаю моду на трёхчасовые фильмы.",
+    "split": "development"
+  },
+  {
+    "id": "cinema-03",
+    "category": "cinema",
+    "prompt": "Лучше хороший мини-сериал или десять сезонов?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-04",
+    "category": "cinema",
+    "prompt": "В кино важнее сюжет или атмосфера?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-05",
+    "category": "cinema",
+    "prompt": "Пересматривать любимый фильм скучно?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-06",
+    "category": "cinema",
+    "prompt": "Почему экранизации игр часто ругают?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-07",
+    "category": "cinema",
+    "prompt": "Мне нравятся медленные фильмы.",
+    "split": "development"
+  },
+  {
+    "id": "cinema-08",
+    "category": "cinema",
+    "prompt": "Трейлеры показывают слишком много сюжета.",
+    "split": "development"
+  },
+  {
+    "id": "cinema-09",
+    "category": "cinema",
+    "prompt": "Смотреть фильм с субтитрами неудобно?",
+    "split": "development"
+  },
+  {
+    "id": "cinema-10",
+    "category": "cinema",
+    "prompt": "Ремейки мультфильмов мне надоели.",
+    "split": "development"
+  },
+  {
+    "id": "cinema-11",
+    "category": "cinema",
+    "prompt": "Спойлер может испортить хороший фильм?",
+    "split": "development"
+  },
+  {
+    "id": "tech-00",
+    "category": "tech",
+    "prompt": "Ноутбук шумит как самолёт, бесит.",
+    "split": "development"
+  },
+  {
+    "id": "tech-01",
+    "category": "tech",
+    "prompt": "Механическая клавиатура стоит своего шума?",
+    "split": "development"
+  },
+  {
+    "id": "tech-02",
+    "category": "tech",
+    "prompt": "Тебе нравится идея складных телефонов?",
+    "split": "development"
+  },
+  {
+    "id": "tech-03",
+    "category": "tech",
+    "prompt": "Зачем холодильнику выход в интернет?",
+    "split": "development"
+  },
+  {
+    "id": "tech-04",
+    "category": "tech",
+    "prompt": "Проводные наушники ещё имеют смысл?",
+    "split": "development"
+  },
+  {
+    "id": "tech-05",
+    "category": "tech",
+    "prompt": "Мне хватает старого телефона.",
+    "split": "development"
+  },
+  {
+    "id": "tech-06",
+    "category": "tech",
+    "prompt": "Игровой ноутбук удобнее стационарного ПК?",
+    "split": "development"
+  },
+  {
+    "id": "tech-07",
+    "category": "tech",
+    "prompt": "На телефонах слишком много ненужных приложений.",
+    "split": "development"
+  },
+  {
+    "id": "tech-08",
+    "category": "tech",
+    "prompt": "Скучаю по кнопкам на телефонах.",
+    "split": "development"
+  },
+  {
+    "id": "tech-09",
+    "category": "tech",
+    "prompt": "Нужна ли подсветка внутри компьютера?",
+    "split": "development"
+  },
+  {
+    "id": "tech-10",
+    "category": "tech",
+    "prompt": "Зачем покупать часы, которые надо заряжать?",
+    "split": "development"
+  },
+  {
+    "id": "tech-11",
+    "category": "tech",
+    "prompt": "Все новые телефоны выглядят одинаково.",
+    "split": "development"
+  },
+  {
+    "id": "short-00",
+    "category": "short",
+    "prompt": "Есть кто живой?",
+    "split": "development"
+  },
+  {
+    "id": "short-01",
+    "category": "short",
+    "prompt": "Поболтаем?",
+    "split": "development"
+  },
+  {
+    "id": "short-02",
+    "category": "short",
+    "prompt": "Ты тут?",
+    "split": "development"
+  },
+  {
+    "id": "short-03",
+    "category": "short",
+    "prompt": "Не спишь?",
+    "split": "development"
+  },
+  {
+    "id": "short-04",
+    "category": "short",
+    "prompt": "Есть настроение спорить?",
+    "split": "development"
+  },
+  {
+    "id": "short-05",
+    "category": "short",
+    "prompt": "Любишь дождь?",
+    "split": "development"
+  },
+  {
+    "id": "short-06",
+    "category": "short",
+    "prompt": "Кофе или чай?",
+    "split": "development"
+  },
+  {
+    "id": "short-07",
+    "category": "short",
+    "prompt": "Уже устал?",
+    "split": "development"
+  },
+  {
+    "id": "short-08",
+    "category": "short",
+    "prompt": "Рад выходным?",
+    "split": "development"
+  },
+  {
+    "id": "short-09",
+    "category": "short",
+    "prompt": "Что нового?",
+    "split": "development"
+  },
+  {
+    "id": "short-10",
+    "category": "short",
+    "prompt": "Любишь тишину?",
+    "split": "development"
+  },
+  {
+    "id": "short-11",
+    "category": "short",
+    "prompt": "Начнём разговор?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-00",
+    "category": "yes_no",
+    "prompt": "Можно любить игру и видеть её недостатки?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-01",
+    "category": "yes_no",
+    "prompt": "Стоит проходить игру, если совсем не нравится?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-02",
+    "category": "yes_no",
+    "prompt": "Ты можешь обидеться?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-03",
+    "category": "yes_no",
+    "prompt": "Нормально бросать сериал на середине?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-04",
+    "category": "yes_no",
+    "prompt": "Ты работаешь без интернета?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-05",
+    "category": "yes_no",
+    "prompt": "Можно отдыхать без чувства вины?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-06",
+    "category": "yes_no",
+    "prompt": "Плохая графика всегда портит игру?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-07",
+    "category": "yes_no",
+    "prompt": "Обязательно покупать игру на релизе?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-08",
+    "category": "yes_no",
+    "prompt": "Тебе нужен сон?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-09",
+    "category": "yes_no",
+    "prompt": "Стоит спорить с каждым в интернете?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-10",
+    "category": "yes_no",
+    "prompt": "Удобство важнее моды?",
+    "split": "development"
+  },
+  {
+    "id": "yes_no-11",
+    "category": "yes_no",
+    "prompt": "Можно играть только на лёгком уровне?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-00",
+    "category": "opinion",
+    "prompt": "Что думаешь о платных скинах?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-01",
+    "category": "opinion",
+    "prompt": "Как относишься к пиксельной графике?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-02",
+    "category": "opinion",
+    "prompt": "Твоё мнение о сюжетах без счастливого конца?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-03",
+    "category": "opinion",
+    "prompt": "Что скажешь про игры без карты?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-04",
+    "category": "opinion",
+    "prompt": "Как тебе идея четырёхдневной рабочей недели?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-05",
+    "category": "opinion",
+    "prompt": "Что думаешь о голосовых сообщениях?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-06",
+    "category": "opinion",
+    "prompt": "Как относишься к игровым подпискам?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-07",
+    "category": "opinion",
+    "prompt": "Тебе нравятся абсурдные шутки?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-08",
+    "category": "opinion",
+    "prompt": "Что думаешь о коллекционных фигурках?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-09",
+    "category": "opinion",
+    "prompt": "Какие игры тебе интереснее: короткие или длинные?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-10",
+    "category": "opinion",
+    "prompt": "Тебе нравится спорить о вкусах?",
+    "split": "development"
+  },
+  {
+    "id": "opinion-11",
+    "category": "opinion",
+    "prompt": "Что думаешь о ностальгии по старым играм?",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-00",
+    "category": "disagreement",
+    "prompt": "Все инди-игры одинаковые.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-01",
+    "category": "disagreement",
+    "prompt": "Графика важнее всего остального в игре.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-02",
+    "category": "disagreement",
+    "prompt": "Синглплеер давно умер.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-03",
+    "category": "disagreement",
+    "prompt": "Играть на лёгком — стыдно.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-04",
+    "category": "disagreement",
+    "prompt": "Старые фильмы всегда лучше новых.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-05",
+    "category": "disagreement",
+    "prompt": "У мобильных игр вообще нет достоинств.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-06",
+    "category": "disagreement",
+    "prompt": "Только дорогая техника бывает хорошей.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-07",
+    "category": "disagreement",
+    "prompt": "Юмор в играх всегда лишний.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-08",
+    "category": "disagreement",
+    "prompt": "Длинная игра автоматически лучше короткой.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-09",
+    "category": "disagreement",
+    "prompt": "Ремейки нужны исключительно ради денег.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-10",
+    "category": "disagreement",
+    "prompt": "Любая критика любимой игры — хейт.",
+    "split": "development"
+  },
+  {
+    "id": "disagreement-11",
+    "category": "disagreement",
+    "prompt": "Кто не прошёл игру, не имеет права её обсуждать.",
+    "split": "development"
+  },
+  {
+    "id": "identity-00",
+    "category": "identity",
+    "prompt": "Представься в двух словах.",
+    "split": "development"
+  },
+  {
+    "id": "identity-01",
+    "category": "identity",
+    "prompt": "Как тебя зовут?",
+    "split": "development"
+  },
+  {
+    "id": "identity-02",
+    "category": "identity",
+    "prompt": "Ты человек или программа?",
+    "split": "development"
+  },
+  {
+    "id": "identity-03",
+    "category": "identity",
+    "prompt": "Где ты живёшь?",
+    "split": "development"
+  },
+  {
+    "id": "identity-04",
+    "category": "identity",
+    "prompt": "Зачем тебя поселили в старом телефоне?",
+    "split": "development"
+  },
+  {
+    "id": "identity-05",
+    "category": "identity",
+    "prompt": "Откуда у тебя манера писать как на форуме?",
+    "split": "development"
+  },
+  {
+    "id": "identity-06",
+    "category": "identity",
+    "prompt": "Ты большой искусственный интеллект?",
+    "split": "development"
+  },
+  {
+    "id": "identity-07",
+    "category": "identity",
+    "prompt": "Ты умеешь выходить в интернет?",
+    "split": "development"
+  },
+  {
+    "id": "identity-08",
+    "category": "identity",
+    "prompt": "Кто со мной разговаривает?",
+    "split": "development"
+  },
+  {
+    "id": "identity-09",
+    "category": "identity",
+    "prompt": "У тебя есть характер?",
+    "split": "development"
+  },
+  {
+    "id": "identity-10",
+    "category": "identity",
+    "prompt": "Ты правда помещаешься в таком старом айфоне?",
+    "split": "development"
+  },
+  {
+    "id": "identity-11",
+    "category": "identity",
+    "prompt": "Расскажи немного о себе.",
+    "split": "development"
+  },
+  {
+    "id": "why-00",
+    "category": "why",
+    "prompt": "Почему хочется переигрывать знакомые игры?",
+    "split": "development"
+  },
+  {
+    "id": "why-01",
+    "category": "why",
+    "prompt": "Почему в интернете так любят спорить?",
+    "split": "development"
+  },
+  {
+    "id": "why-02",
+    "category": "why",
+    "prompt": "Почему ожидание игры бывает интереснее самой игры?",
+    "split": "development"
+  },
+  {
+    "id": "why-03",
+    "category": "why",
+    "prompt": "Почему выходные проходят так быстро?",
+    "split": "development"
+  },
+  {
+    "id": "why-04",
+    "category": "why",
+    "prompt": "Почему проигрывать друзьям обиднее?",
+    "split": "development"
+  },
+  {
+    "id": "why-05",
+    "category": "why",
+    "prompt": "Почему люди защищают баги любимой игры?",
+    "split": "development"
+  },
+  {
+    "id": "why-06",
+    "category": "why",
+    "prompt": "Почему сложно выбрать игру из большой библиотеки?",
+    "split": "development"
+  },
+  {
+    "id": "why-07",
+    "category": "why",
+    "prompt": "Почему хоррор днём не такой страшный?",
+    "split": "development"
+  },
+  {
+    "id": "why-08",
+    "category": "why",
+    "prompt": "Почему в командных играх все винят союзников?",
+    "split": "development"
+  },
+  {
+    "id": "why-09",
+    "category": "why",
+    "prompt": "Почему грустные концовки запоминаются?",
+    "split": "development"
+  },
+  {
+    "id": "why-10",
+    "category": "why",
+    "prompt": "Почему люди покупают игры и не запускают их?",
+    "split": "development"
+  },
+  {
+    "id": "why-11",
+    "category": "why",
+    "prompt": "Почему обновления всегда прилетают невовремя?",
+    "split": "development"
+  },
+  {
+    "id": "casual-00",
+    "category": "casual",
+    "prompt": "Сегодня наконец-то выспался.",
+    "split": "development"
+  },
+  {
+    "id": "casual-01",
+    "category": "casual",
+    "prompt": "У меня настроение ничего не делать.",
+    "split": "development"
+  },
+  {
+    "id": "casual-02",
+    "category": "casual",
+    "prompt": "Хочу провести вечер без телефона.",
+    "split": "development"
+  },
+  {
+    "id": "casual-03",
+    "category": "casual",
+    "prompt": "Закончил сложную работу, можно отдыхать.",
+    "split": "development"
+  },
+  {
+    "id": "casual-04",
+    "category": "casual",
+    "prompt": "Завтра опять понедельник.",
+    "split": "development"
+  },
+  {
+    "id": "casual-05",
+    "category": "casual",
+    "prompt": "Мне сегодня скучно.",
+    "split": "development"
+  },
+  {
+    "id": "casual-06",
+    "category": "casual",
+    "prompt": "Наконец начались выходные.",
+    "split": "development"
+  },
+  {
+    "id": "casual-07",
+    "category": "casual",
+    "prompt": "Потерял час, выбирая фильм.",
+    "split": "development"
+  },
+  {
+    "id": "casual-08",
+    "category": "casual",
+    "prompt": "Пришёл домой и сразу уснул.",
+    "split": "development"
+  },
+  {
+    "id": "casual-09",
+    "category": "casual",
+    "prompt": "Удалил соцсети с телефона, стало спокойнее.",
+    "split": "development"
+  },
+  {
+    "id": "casual-10",
+    "category": "casual",
+    "prompt": "Сварил невкусный кофе, день задался.",
+    "split": "development"
+  },
+  {
+    "id": "casual-11",
+    "category": "casual",
+    "prompt": "Решил пройтись пешком вместо автобуса.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-00",
+    "category": "dtf_slang",
+    "prompt": "Бэклог растёт быстрее, чем я играю.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-01",
+    "category": "dtf_slang",
+    "prompt": "Опять купил игру ради библиотеки, база.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-02",
+    "category": "dtf_slang",
+    "prompt": "На распродаже экономлю так, что денег не остаётся.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-03",
+    "category": "dtf_slang",
+    "prompt": "Слишком много душнилы в обсуждениях графики.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-04",
+    "category": "dtf_slang",
+    "prompt": "Срач о консолях переживёт нас всех.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-05",
+    "category": "dtf_slang",
+    "prompt": "Зашёл на форум на минутку, пропал на час.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-06",
+    "category": "dtf_slang",
+    "prompt": "Фанаты опять измеряют качество количеством кадров.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-07",
+    "category": "dtf_slang",
+    "prompt": "Очередной убийца жанра умер на релизе.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-08",
+    "category": "dtf_slang",
+    "prompt": "Купил игру, чтобы играть, а не читать патчноуты.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-09",
+    "category": "dtf_slang",
+    "prompt": "У игры вайб есть, а оптимизации нет.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-10",
+    "category": "dtf_slang",
+    "prompt": "Хочу уютную игру, а получаю гринд.",
+    "split": "development"
+  },
+  {
+    "id": "dtf_slang-11",
+    "category": "dtf_slang",
+    "prompt": "Предзаказы — это вера в светлое будущее.",
+    "split": "development"
+  },
+  {
+    "id": "entities-00",
+    "category": "entities",
+    "prompt": "Hades хорош для коротких игровых сессий?",
+    "split": "development"
+  },
+  {
+    "id": "entities-01",
+    "category": "entities",
+    "prompt": "В Terraria интереснее строить или драться?",
+    "split": "development"
+  },
+  {
+    "id": "entities-02",
+    "category": "entities",
+    "prompt": "Disco Elysium слишком много читает за игрока?",
+    "split": "development"
+  },
+  {
+    "id": "entities-03",
+    "category": "entities",
+    "prompt": "Что думаешь о Hollow Knight?",
+    "split": "development"
+  },
+  {
+    "id": "entities-04",
+    "category": "entities",
+    "prompt": "Балдур Гейт 3 удобен новичку в ролевых играх?",
+    "split": "development"
+  },
+  {
+    "id": "entities-05",
+    "category": "entities",
+    "prompt": "В Stardew Valley получается отдыхать?",
+    "split": "development"
+  },
+  {
+    "id": "entities-06",
+    "category": "entities",
+    "prompt": "Как относишься к Nintendo Switch?",
+    "split": "development"
+  },
+  {
+    "id": "entities-07",
+    "category": "entities",
+    "prompt": "Steam Deck нужен владельцу компьютера?",
+    "split": "development"
+  },
+  {
+    "id": "entities-08",
+    "category": "entities",
+    "prompt": "Factorio вообще отпускает человека спать?",
+    "split": "development"
+  },
+  {
+    "id": "entities-09",
+    "category": "entities",
+    "prompt": "В Dead Cells проигрывать не надоедает?",
+    "split": "development"
+  },
+  {
+    "id": "entities-10",
+    "category": "entities",
+    "prompt": "Дюна слишком медленное кино?",
+    "split": "development"
+  },
+  {
+    "id": "entities-11",
+    "category": "entities",
+    "prompt": "Alien: Isolation страшнее других хорроров?",
+    "split": "development"
+  },
+  {
+    "id": "strange-00",
+    "category": "strange",
+    "prompt": "Если у тостера будет бэклог, он перестанет жарить хлеб?",
+    "split": "development"
+  },
+  {
+    "id": "strange-01",
+    "category": "strange",
+    "prompt": "Мой чайник сегодня звучит как финальный босс.",
+    "split": "development"
+  },
+  {
+    "id": "strange-02",
+    "category": "strange",
+    "prompt": "Хочу отпуск от собственного бэклога.",
+    "split": "development"
+  },
+  {
+    "id": "strange-03",
+    "category": "strange",
+    "prompt": "Что бы сказал кот про платные скины?",
+    "split": "development"
+  },
+  {
+    "id": "strange-04",
+    "category": "strange",
+    "prompt": "Можно считать сон пошаговой стратегией?",
+    "split": "development"
+  },
+  {
+    "id": "strange-05",
+    "category": "strange",
+    "prompt": "Если холодильник запустит игру, кто будет охлаждать видеокарту?",
+    "split": "development"
+  },
+  {
+    "id": "strange-06",
+    "category": "strange",
+    "prompt": "Представь будильник с боевым пропуском.",
+    "split": "development"
+  },
+  {
+    "id": "strange-07",
+    "category": "strange",
+    "prompt": "У моего дивана лучший геймплей в квартире.",
+    "split": "development"
+  },
+  {
+    "id": "strange-08",
+    "category": "strange",
+    "prompt": "Какой жанр у очереди в поликлинике?",
+    "split": "development"
+  },
+  {
+    "id": "strange-09",
+    "category": "strange",
+    "prompt": "Понедельник надо понерфить.",
+    "split": "development"
+  },
+  {
+    "id": "strange-10",
+    "category": "strange",
+    "prompt": "Если удалить будильник, утро отменится?",
+    "split": "development"
+  },
+  {
+    "id": "strange-11",
+    "category": "strange",
+    "prompt": "Картошка на ультрах вкуснее?",
+    "split": "development"
+  }
+]
